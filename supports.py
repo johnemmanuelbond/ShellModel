@@ -9,6 +9,7 @@ from numpy import linalg as LA
 import scipy as sp
 import pandas as pd
 import sympy as sym
+import os
 
 #suporting math
 

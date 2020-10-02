@@ -3,9 +3,9 @@
 # an external force
 
 
-from ShellModel.supports import *
-from ShellModel.Collections import *
-from ShellModel.Analyzer import *
+from supports import *
+from Collections import *
+from Analyzer import *
 
 class ParticleArray:
     

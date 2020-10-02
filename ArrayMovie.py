@@ -2,10 +2,10 @@
 # the class has options to view the sedimentation down a particular axis (since the sedimentation code
 # is fully 3D now)
 
-from ShellModel.supports import *
-from ShellModel.Collections import *
-from ShellModel.Analyzer import *
-from ShellModel.ParticleArray import *
+from supports import *
+from Collections import *
+from Analyzer import *
+from ParticleArray import *
 
 class ArrayMovie:
     
@@ -27,10 +27,13 @@ class ArrayMovie:
         
         if((axis=='x' or axis =='y' or axis=='z')!=True):
             raise Exceptiom("Please correctly specifiy perspective (x y or z)")
-        
+        self.title = title
+
         self.axis = axis
         
         self.isIso = isIso
+
+        self.cwd = os.getcwd()
     
     # runs the timestepping code 'steps' times and records the positions and orientations in an array
     def simulate(self, considerClumping=False):
@@ -76,9 +79,10 @@ class ArrayMovie:
         ax.set_xlim(np.min(xdata)-5, np.max(xdata)+5)
         ax.set_ylim(np.min(ydata)-5, np.max(ydata)+5)
         
-        # sets axis labels
+        # sets axis labels and title
         ax.set_xlabel(np.array(['x','y','z'])[xax])
         ax.set_ylabel(np.array(['x','y','z'])[yax])
+        plt.title(self.title)
         
         # plots the particles
         for i in np.arange(self.N):
@@ -118,10 +122,11 @@ class ArrayMovie:
         ax.set_xlim(np.min(xdata)-5, np.max(xdata)+5)
         ax.set_ylim(np.min(ydata)-5, np.max(ydata)+5)
         
-        # sets axis labels
+        # sets axis labels and title
         ax.set_xlabel(np.array(['x','y','z'])[xax])
         ax.set_ylabel(np.array(['x','y','z'])[yax])
-        
+        plt.title(self.title)
+
         # plots said trajectories
         for i in np.arange(self.N):
             ax.plot(self.ps[0:j,i,xax],self.ps[0:j,i,yax], linewidth = 0.5);
@@ -136,13 +141,19 @@ class ArrayMovie:
         return ax,
     
     # creates a movie in a certain location with a certain title
-    def animate(self, title = "output", path = "C:\\Users\\johne\\Physics Research\\Liquid Crystals\\FuncAnimationOutputs\\"):
+    def animate(self, title = "output", outputPath = None):
         fig, axes = plt.subplots();
         
         # see: https://community.dur.ac.uk/joshua.borrow/blog/posts/making_research_movies_in_python/
         # the exact specifications of some parameters are still a little arbitrary, specifically interval is free to change
         animation = mp.animation.FuncAnimation(fig, self.updateAxes, np.arange(self.s), fargs = [axes], interval = 100/self.dt)
-        
-        animation.save(path + title + ".mp4")
+
+        if(outputPath == None):
+            outputPath = self.cwd+"\\outputMovies"
+
+        if(os.path.isdir(outputPath)!=True):
+            os.mkdir(outputPath)
+
+        animation.save(outputPath + "\\" + self.title + ".mp4")
         
         

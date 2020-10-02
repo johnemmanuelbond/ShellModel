@@ -2,8 +2,8 @@
 # this code is Now vectorized! (as of 9.6.2020).
 
 
-from ShellModel.supports import *
-from ShellModel.Collections import *
+from supports import *
+from Collections import *
 
 
 class Analyzer:
