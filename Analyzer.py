@@ -1,10 +1,10 @@
 # code for performing the tirado calculation on a collection,
 # this code is Now vectorized! (as of 9.6.2020).
 
-!cd ShellModel
-from supports import *
-from Collections import *
-!cd ..
+
+from ShelModel.supports import *
+from ShellModel.Collections import *
+
 
 class Analyzer:
 

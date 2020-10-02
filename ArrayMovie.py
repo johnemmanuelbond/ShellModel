@@ -2,12 +2,10 @@
 # the class has options to view the sedimentation down a particular axis (since the sedimentation code
 # is fully 3D now)
 
-!cd ShellModel
-from supports import *
-from Collections import *
-from Analyzer import *
-from ParticleArray import *
-!cd..
+from ShellModel.supports import *
+from ShellModel.Collections import *
+from ShellModel.Analyzer import *
+from ShellModel.ParticleArray import *
 
 class ArrayMovie:
     
