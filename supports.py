@@ -4,7 +4,6 @@ import matplotlib as mp
 import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 from mpl_toolkits.mplot3d import Axes3D
-%matplotlib inline
 import numpy as np
 from numpy import linalg as LA
 import scipy as sp
