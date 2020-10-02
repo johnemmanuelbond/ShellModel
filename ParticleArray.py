@@ -2,9 +2,11 @@
 # initial positions 'posotions' with initial orientations 'orientations' subject to a fixed viscosity tensor and
 # an external force
 
+!cd ShellModel
 from supports import *
 from Collections import *
 from Analyzer import *
+!cd ..
 
 class ParticleArray:
     

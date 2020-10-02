@@ -1,7 +1,8 @@
 #imports
 
+!cd ShellModel
 from supports import*
-
+!cd..
 
 #code for representing collections of beads, it needs to store a series of vectors
 # as well as the radius of each bead.
