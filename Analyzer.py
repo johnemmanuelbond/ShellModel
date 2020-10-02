@@ -2,7 +2,7 @@
 # this code is Now vectorized! (as of 9.6.2020).
 
 
-from ShelModel.supports import *
+from ShellModel.supports import *
 from ShellModel.Collections import *
 
 
