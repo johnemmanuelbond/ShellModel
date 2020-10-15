@@ -155,5 +155,7 @@ class ArrayMovie:
             os.mkdir(outputPath)
 
         animation.save(outputPath + "\\" + self.title + ".mp4")
-        
+
+        close(fig)
+
         
