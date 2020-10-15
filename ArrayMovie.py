@@ -51,6 +51,13 @@ class ArrayMovie:
         
         self.new = False
     
+    # gets the full 3d trajectories for each particle
+    def getTrajectories(self):
+        if(self.new):
+            self.simulate()
+
+        return self.ps, self.os
+
     # plots the rods and their orientations at a given step j
     def plotInstance(self, j, ax):
         # ensures sumulation is complete
@@ -158,4 +165,12 @@ class ArrayMovie:
 
         close(fig)
 
-        
+    #returns the plot at the final time.
+    def getPlot(self)
+        if(self.new):
+            self.simulate()
+        fig, ax = plt.subplots()
+
+        updateAxes(self.s,ax)
+
+        return fig
