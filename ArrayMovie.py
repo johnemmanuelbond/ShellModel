@@ -166,11 +166,11 @@ class ArrayMovie:
         close(fig)
 
     #returns the plot at the final time.
-    def getPlot(self)
+    def getPlot(self):
         if(self.new):
             self.simulate()
         fig, ax = plt.subplots()
 
-        updateAxes(self.s,ax)
+        self.updateAxes(self.s-1,ax)
 
         return fig
