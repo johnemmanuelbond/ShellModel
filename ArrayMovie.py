@@ -163,7 +163,7 @@ class ArrayMovie:
 
         animation.save(outputPath + "\\" + self.title + ".mp4")
 
-        close(fig)
+        plt.close(fig)
 
     #returns the plot at the final time.
     def getPlot(self):
