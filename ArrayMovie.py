@@ -26,7 +26,7 @@ class ArrayMovie:
         self.new = True
         
         if((axis=='x' or axis =='y' or axis=='z')!=True):
-            raise Exceptiom("Please correctly specifiy perspective (x y or z)")
+            raise Exception("Please correctly specifiy perspective (x y or z)")
         self.title = title
 
         self.axis = axis
@@ -166,11 +166,23 @@ class ArrayMovie:
         plt.close(fig)
 
     #returns the plot at the final time.
-    def getPlot(self):
+    def getFinal(self):
         if(self.new):
             self.simulate()
         fig, ax = plt.subplots()
 
         self.updateAxes(self.s-1,ax)
+
+        return fig
+
+    # returns a plot with the particles at
+    def getStill(self, times=10):
+        if(self.new):
+            self.simulate()
+        fig, ax = plt.subplots()
+
+        self.updateAxes(self.s-1,ax)
+        for i in np.linspace(0,self.numsteps,times,endpoint=False):
+            self.plotInstance(self, i, ax)
 
         return fig
