@@ -182,7 +182,8 @@ class ArrayMovie:
         fig, ax = plt.subplots()
 
         self.updateAxes(self.s-1,ax)
-        for i in np.linspace(0,self.s,times,endpoint=False):
+        frames = np.linspace(0,self.s,times,endpoint=False).astype(int)
+        for i in frames:
             self.plotInstance(i, ax)
 
         return fig
