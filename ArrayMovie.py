@@ -183,6 +183,6 @@ class ArrayMovie:
 
         self.updateAxes(self.s-1,ax)
         for i in np.linspace(0,self.s,times,endpoint=False):
-            self.plotInstance(self, i, ax)
+            self.plotInstance(i, ax)
 
         return fig
