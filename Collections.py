@@ -90,7 +90,7 @@ class Sphere(Collection):
         return np.mean(rs) + Rcorr*self.a
     
     def surfaceDensity(self):
-        return self.N/(np.pi*(self.radius**2))
+        return self.N/(np.pi*(self.radius()**2))
 
 #generates a cylinder of beads
 class Cylinder(Collection):
