@@ -148,7 +148,7 @@ class ArrayMovie:
         return ax,
     
     # creates a movie in a certain location with a certain title
-    def animate(self, title = "output", outputPath = None):
+    def animate(self, outputPath = None):
         fig, axes = plt.subplots();
         
         # see: https://community.dur.ac.uk/joshua.borrow/blog/posts/making_research_movies_in_python/
