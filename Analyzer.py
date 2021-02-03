@@ -75,6 +75,8 @@ class Analyzer:
     def zeta(self):
         return 6*np.pi*self.eta*self.col.a
     
+    # Translation is below
+
     # sets up the linear system needed to calculate the shielding tensors further down the road i.e. each side of 
     # Tirado equaiton 15. I've also used the a1 and b1 vectors to map the 3x3 shielding tensors G to 9-vectors, meaning
     # the linear equation consists of a 9N by 9N matrix and a 9N-vector which is the mapped identity
@@ -170,6 +172,9 @@ class Analyzer:
         self.Xi=Xi
         return Xi
     
+
+    # Rotation is below
+
     def computeRotSystem(self):
         
         N = self.col.N
@@ -190,7 +195,7 @@ class Analyzer:
         a1 = (np.floor(np.arange(9)/3)).astype(int)
         b1 = (np.arange(9)%3).astype(int)
         
-        # useful indexing vectors, big index is the index of each G-component, gindex is the index within each G,
+        # useful indexing vectors, big index is the index of each C-component, gindex is the index within each C,
         # and particleindex is the index of each particle. This is necessary to keep track of which index of the 9N-vector 
         bigindex = (np.arange(9*N)).astype(int)
         gindex = (bigindex%9).astype(int)
@@ -224,7 +229,7 @@ class Analyzer:
         self.rotSol = rotSol
         return rotMat
     
-    # solves the system of generated above for the shielding tensors
+    # solves the system of generated above for the rotational shielding tensors
     def getRotShielding(self):
         # code to avoid repeating calculations if it's already been done
         if(self.rotMat is None):
@@ -236,7 +241,7 @@ class Analyzer:
         
         cvec = LA.solve(rotMat, rotSol)
         
-        # reshapes gvec into a list of 3x3 tensors
+        # reshapes cvec into a list of 3x3 tensors
         c = cvec.reshape(self.col.N,3,3)
         c = c.round(8)
         
@@ -244,7 +249,7 @@ class Analyzer:
         return c
 
     # computes the rotational drag tensor (about axes through the coordinate cente) from the shielding tensors
-    # I did this tensor math myself, when acting on an angular velocity, Theta gives the resulting torque due to drag
+    # I did this tensor math myself, when acting on an angular velocity, Theta gives the resulting torque due to drag, I based my analyses off a different Tirado paper
     # this bit of code is a much later addition to this class
     def getTheta(self, range = 'full'):
         # code to avoid repeating calculations if it's already been done
@@ -258,7 +263,7 @@ class Analyzer:
         x = np.copy(self.col.pts)
         
         # using einsum method to calculate the complicated tensor math
-        Thetas = np.einsum("ijk,aj,kl,alp,pqr,ar->aiq",LC,x,c,z,LC,x)
+        Thetas = np.einsum("ijk,aj,akl,lp,pqr,ar->aiq",LC,x,c,z,LC,x)
         
         if(range == 'full'):
             Theta = np.sum(Thetas, axis=0)
