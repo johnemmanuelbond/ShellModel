@@ -209,7 +209,7 @@ class Analyzer:
                     rotMat[i,j] = A[a1[gindex[i]],a1[gindex[j]]]*B[b1[gindex[j]],b1[gindex[i]]]
         else:
             # vectorized the looped code above
-            sol[bigindex] = (a1[gindex[bigindex]]==b1[gindex[bigindex]])*1
+            rotSol[bigindex] = (a1[gindex[bigindex]]==b1[gindex[bigindex]])*1
             i,j = np.mgrid[0:9*N,0:9*N]
             A = np.zeros((9*N,9*N,3,3))
             B = np.zeros((9*N,9*N,3,3))
