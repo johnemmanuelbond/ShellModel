@@ -215,7 +215,7 @@ class Analyzer:
             B = np.zeros((9*N,9*N,3,3))
             A[i,j] = z@T[particleindex[i],particleindex[j]]
             B[i,j] = (np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[i]]) @ (LA.pinv(np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[j]]))
-            mat[i,j] = A[i,j,a1[gindex[i]],a1[gindex[j]]]*B[i,j,b1[gindex[j]],b1[gindex[i]]]
+            rotMat[i,j] = A[i,j,a1[gindex[i]],a1[gindex[j]]]*B[i,j,b1[gindex[j]],b1[gindex[i]]]
         
         rotMat = rotMat + np.eye(9*self.col.N)
         rotMat = rotMat.round(8)
