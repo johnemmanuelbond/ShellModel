@@ -22,7 +22,10 @@ class Analyzer:
         self.T = None
         self.mat = None
         self.sol = None
+        self.rotMat = None
+        self.rotSol = None
         self.g = None
+        self.c = None
         self.Xi = None
         self.Thetas = None
         self.l=limit
@@ -167,22 +170,95 @@ class Analyzer:
         self.Xi=Xi
         return Xi
     
+    def computeRotSystem(self):
+        
+        N = self.col.N
+        z = self.zeta()
+        x = self.col.pts
+        
+        #initialize the matrix and the other side of the equation
+        rotMat = np.zeros((9*N,9*N))
+        rotSol = np.zeros((9*N))
+        
+        # code to avoid repeating calculations if it's already been done
+        if(self.T is None):
+            T = self.getT()
+        else:
+            T = np.copy(self.T)
+        
+        # a1 and b1 contain the mapping information
+        a1 = (np.floor(np.arange(9)/3)).astype(int)
+        b1 = (np.arange(9)%3).astype(int)
+        
+        # useful indexing vectors, big index is the index of each G-component, gindex is the index within each G,
+        # and particleindex is the index of each particle. This is necessary to keep track of which index of the 9N-vector 
+        bigindex = (np.arange(9*N)).astype(int)
+        gindex = (bigindex%9).astype(int)
+        particleindex = (np.floor(bigindex/9)).astype(int)
+        
+        # ran into a memory problem for objects that are too big, 500 is an arbitrary cutoff.
+        
+        if((N >= 500) & self.l):
+            # need to loop if the compound shape is too big\
+            print("Vectorization will cause a memory problem. N = " + str(N))
+            for i in bigindex:
+                rotSol[i] = (a1[gindex[i]]==b1[gindex[i]])*1
+                for j in bigindex:
+                    A = z @ T[particleindex[i],particleindex[j]]
+                    B[i,j] = np.einsum("ij,jkl,l->ik"z,LC,x[i])@np.pinv(np.einsum("ij,jkl,l->ik",z,LC,x[j]))
+                    rotMat[i,j] = A[a1[gindex[i]],a1[gindex[j]]]*B[b1[gindex[j]],b1[gindex[i]]]
+        else:
+            # vectorized the looped code above
+            sol[bigindex] = (a1[gindex[bigindex]]==b1[gindex[bigindex]])*1
+            i,j = np.mgrid[0:9*N,0:9*N]
+            A = np.zeros((9*N,9*N,3,3))
+            B = np.zeros((9*N,9*N,3,3))
+            A[i,j] = z@T[particleindex[i],particleindex[j]]
+            B[i,j] = np.einsum("ij,jkl,l->ik"z,LC,x[i])@np.pinv(np.einsum("ij,jkl,l->ik",z,LC,x[j]))
+            mat[i,j] = A[i,j,a1[gindex[i]],a1[gindex[j]]]*B[i,j,b1[gindex[j]],b1[gindex[i]]]
+        
+        rotMat = rotMat + np.eye(9*self.col.N)
+        rotMat = rotMat.round(8)
+        
+        self.rotMat = rotMat
+        self.rotSol = rotSol
+        return rotMat
+    
+    # solves the system of generated above for the shielding tensors
+    def getRotShielding(self):
+        # code to avoid repeating calculations if it's already been done
+        if(self.rotMat is None):
+            mat = self.computeRotSystem()
+            sol = self.rotSol
+        else:
+            mat = self.rotMat
+            sol = self.rotSol
+        
+        cvec = LA.solve(rotMat, rotSol)
+        
+        # reshapes gvec into a list of 3x3 tensors
+        c = cvec.reshape(self.col.N,3,3)
+        c = c.round(8)
+        
+        self.c = c
+        return c
+
     # computes the rotational drag tensor (about axes through the coordinate cente) from the shielding tensors
     # I did this tensor math myself, when acting on an angular velocity, Theta gives the resulting torque due to drag
     # this bit of code is a much later addition to this class
     def getTheta(self, range = 'full'):
         # code to avoid repeating calculations if it's already been done
-        if (self.g is None):
-            g = self.getShielding()
+        if (self.c is None):
+            c = self.getRotShielding()
         else:
-            g = self.g
+            c = self.c
         
         # getting relevant matrices
         z = self.zeta()
         x = np.copy(self.col.pts)
         
         # using einsum method to calculate the complicated tensor math
-        Thetas = np.einsum("ijk,aj,kl,alp,pqr,ar->aiq",LC,x,z,g,LC,x)
+        Thetas = np.einsum("ijk,aj,kl,alp,pqr,ar->aiq",LC,x,c,z,LC,x)
         
         if(range == 'full'):
             Theta = np.sum(Thetas, axis=0)

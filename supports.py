@@ -7,7 +7,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 from numpy import linalg as LA
 import scipy as sp
-import pandas as pd
+#import pandas as pd
 import sympy as sym
 import os
 
