@@ -205,7 +205,7 @@ class Analyzer:
                 rotSol[i] = (a1[gindex[i]]==b1[gindex[i]])*1
                 for j in bigindex:
                     A = z @ T[particleindex[i],particleindex[j]]
-                   B[i,j] = (np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[i]]) @ (np.pinv(np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[j]]))
+                    B[i,j] = (np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[i]]) @ (np.pinv(np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[j]]))
                     rotMat[i,j] = A[a1[gindex[i]],a1[gindex[j]]]*B[b1[gindex[j]],b1[gindex[i]]]
         else:
             # vectorized the looped code above
