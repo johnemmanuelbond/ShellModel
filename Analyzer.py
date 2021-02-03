@@ -228,11 +228,11 @@ class Analyzer:
     def getRotShielding(self):
         # code to avoid repeating calculations if it's already been done
         if(self.rotMat is None):
-            mat = self.computeRotSystem()
-            sol = self.rotSol
+            rotMat = self.computeRotSystem()
+            rotSol = self.rotSol
         else:
-            mat = self.rotMat
-            sol = self.rotSol
+            rotMat = self.rotMat
+            rotSol = self.rotSol
         
         cvec = LA.solve(rotMat, rotSol)
         
