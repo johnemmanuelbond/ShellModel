@@ -210,7 +210,7 @@ class Analyzer:
                 rotSol[i] = (a1[gindex[i]]==b1[gindex[i]])*1
                 for j in bigindex:
                     A = z @ T[particleindex[i],particleindex[j]]
-                    B[i,j] = (np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[i]]) @ (LA.pinv(np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[j]]))
+                    B[i,j] = (np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[j]]) @ (LA.pinv(np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[i]]))
                     rotMat[i,j] = A[a1[gindex[i]],a1[gindex[j]]]*B[b1[gindex[j]],b1[gindex[i]]]
         else:
             # vectorized the looped code above
@@ -219,7 +219,7 @@ class Analyzer:
             A = np.zeros((9*N,9*N,3,3))
             B = np.zeros((9*N,9*N,3,3))
             A[i,j] = z@T[particleindex[i],particleindex[j]]
-            B[i,j] = (np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[i]]) @ (LA.pinv(np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[j]]))
+            B[i,j] = (np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[j]]) @ (LA.pinv(np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[i]]))
             rotMat[i,j] = A[i,j,a1[gindex[i]],a1[gindex[j]]]*B[i,j,b1[gindex[j]],b1[gindex[i]]]
         
         rotMat = rotMat + np.eye(9*self.col.N)
@@ -263,7 +263,7 @@ class Analyzer:
         x = np.copy(self.col.pts)
         
         # using einsum method to calculate the complicated tensor math
-        Thetas = np.einsum("ijk,aj,akl,lp,prq,ar->aiq",LC,x,c,z,LC,x)
+        Thetas = np.einsum("ijk,aj,akl,lp,pqr,ar->aiq",LC,x,c,z,LC,x)
         
         if(range == 'full'):
             Theta = np.sum(Thetas, axis=0)
