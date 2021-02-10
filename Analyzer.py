@@ -263,7 +263,7 @@ class Analyzer:
         x = np.copy(self.col.pts)
         
         # using einsum method to calculate the complicated tensor math
-        Thetas = np.einsum("ijk,aj,akl,lp,pqr,ar->aiq",LC,x,c,z,LC,x)
+        Thetas = np.einsum("ijk,aj,akl,lp,prq,ar->aiq",LC,x,c,z,LC,x)
         
         if(range == 'full'):
             Theta = np.sum(Thetas, axis=0)
