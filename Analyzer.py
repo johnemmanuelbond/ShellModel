@@ -12,7 +12,7 @@ class Analyzer:
     # there is also an option to have the principal axes of the tensor viscosity be rotated in relation to the
     # axes of the collection, the rotation axis is the x axis by default, finally limit controls for if the computer
     # running this calculation does not have enough memory to properly process a vectorized version of this code.
-    def __init__(self, col, eta, theta=0, ax='x', limit=True):
+    def __init__(self, col, eta, theta=0, ax='x', limit=False):
         
         if(isinstance(col,Collection) != True):
             raise Exception("Must pass in a collection object as a parameter")
@@ -107,7 +107,7 @@ class Analyzer:
         
         # ran into a memory problem for objects that are too big, 500 is an arbitrary cutoff.
         
-        if((N >= 500) & self.l):
+        if((N >= 500) or self.l):
             # need to loop if the compound shape is too big\
             print("Vectorization will cause a memory problem. N = " + str(N))
             for i in bigindex:
@@ -203,14 +203,14 @@ class Analyzer:
         
         # ran into a memory problem for objects that are too big, 500 is an arbitrary cutoff.
         
-        if((N >= 500) & self.l):
+        if((N >= 500) or self.l):
             # need to loop if the compound shape is too big\
             print("Vectorization will cause a memory problem. N = " + str(N))
             for i in bigindex:
                 rotSol[i] = (a1[gindex[i]]==b1[gindex[i]])*1
                 for j in bigindex:
                     A = z @ T[particleindex[i],particleindex[j]]
-                    B = (np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[j]]) @ (LA.pinv(np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[i]]))
+                    B = (np.einsum("ij,jkl,l->ik",z,LC,x[particleindex[j]])) @ (LA.pinv(np.einsum("ij,jkl,l->ik",z,LC,x[particleindex[i]])))
                     rotMat[i,j] = A[a1[gindex[i]],a1[gindex[j]]]*B[b1[gindex[j]],b1[gindex[i]]]
         else:
             # vectorized the looped code above
@@ -218,13 +218,16 @@ class Analyzer:
             i,j = np.mgrid[0:9*N,0:9*N]
             A = np.zeros((9*N,9*N,3,3))
             B = np.zeros((9*N,9*N,3,3))
+            #print(x.shape)
+            #print(x[particleindex[i]].shape)
+            #print(x[particleindex[j]].shape)
             A[i,j] = z@T[particleindex[i],particleindex[j]]
-            B[j,i] = (np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[j]]) @ (LA.pinv(np.einsum("ij,jkl,al->aik",z,LC,x)[particleindex[i]]))
-            rotMat[i,j] = A[i,j,a1[gindex[i]],a1[gindex[j]]]*B[i,j,b1[gindex[j]],b1[gindex[i]]]
+            B[i,j] = np.einsum("ijab,ijbc->ijac",(np.einsum("ij,jkl,al->aik",z,LC,x))[particleindex[j]],(LA.pinv(np.einsum("ij,jkl,al->aik",z,LC,x)))[particleindex[i]])
+            rotMat[i,j] = A[i,j,a1[gindex[i]],a1[gindex[j]]]*B[j,i,b1[gindex[j]],b1[gindex[i]]]
         
         rotMat = rotMat + np.eye(9*self.col.N)
         rotMat = rotMat.round(8)
-        
+        #2514,7623,17807,30989
         self.rotMat = rotMat
         self.rotSol = rotSol
         return rotMat
